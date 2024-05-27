@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import Spinner from './Spinner';
 export default class NewsCard extends Component {
 
     articles = [
@@ -18,47 +19,64 @@ export default class NewsCard extends Component {
     ]
 
     async componentDidMount() {
-        
+        this.setState(a => ({
+            loading: true
+        }));
         let url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=1';
         let data = await fetch(url)
         let parsedData = await data.json()
-        this.setState({ article_list: parsedData.articles });
+        this.setState({ article_list: parsedData.articles, loading: false });
+
 
     }
 
     constructor() {
 
         super()
-        
+
         this.state = {
             article_list: this.articles,
-            PageNo : 1
+            PageNo: 1,
+            loading: true
         }
-       
+
 
     }
 
-   
-    handlePreviousButton = async() => {
-        let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=${this.state.PageNo-1}`;
-        let data = await fetch(url)
-        let parsedData = await data.json()
-        // console.log(this.state.PageNo)
+
+    handlePreviousButton = async () => {
         this.setState(a => ({
-            article_list: parsedData.articles,
-            PageNo: a.PageNo - 1
+            loading: true,
+            article_list:null
         }));
-        
+
+        let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=${this.state.PageNo - 1}`;
+        let data = await fetch(url)
+
+        let parsedData = await data.json()
+        // console.log(this.state.PageNo)
+        this.setState(a => ({
+            article_list: parsedData.articles,
+            PageNo: a.PageNo - 1,
+            loading: false
+        }));
+
     }
 
-    handleNextButton = async() => {
-        let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=${this.state.PageNo+1}`;
+    handleNextButton = async () => {
+        this.setState(a => ({
+            loading: true,
+            article_list:null
+        }));
+
+        let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=${this.state.PageNo + 1}`;
         let data = await fetch(url)
         let parsedData = await data.json()
         // console.log(this.state.PageNo)
         this.setState(a => ({
             article_list: parsedData.articles,
-            PageNo: a.PageNo + 1
+            PageNo: a.PageNo + 1,
+            loading: false
         }));
 
     }
@@ -67,8 +85,13 @@ export default class NewsCard extends Component {
 
 
         return (
+
+
             <div className="row" >
-                {this.state.article_list.map((element) => {
+                <div>
+                    {this.state.loading && <Spinner />}
+                </div>
+                {this.state.article_list ? (this.state.article_list.map((element) => {
                     return (
 
                         <div className='col-md-2 mb-2' key={element.url} >
@@ -81,15 +104,15 @@ export default class NewsCard extends Component {
                                     <a href={element.url ? element.url : ""} target="" className="btn btn-primary">Read more</a>
                                 </div>
                             </div>
-                            
+
                         </div>
                     );
-                })}
+                })):null}
                 <div className="d-flex justify-content-between">
-                                <button type="button" disabled={this.state.PageNo<=1} className="btn btn-primary d-flex" onClick={this.handlePreviousButton}>Previous</button>
-                                <button type="button" className="btn btn-primary d-flex" onClick={this.handleNextButton}>Next</button>
+                    <button type="button" disabled={this.state.PageNo <= 1} className="btn btn-primary d-flex" onClick={this.handlePreviousButton}>Previous</button>
+                    <button type="button" className="btn btn-primary d-flex" onClick={this.handleNextButton}>Next</button>
                 </div>
-               
+
             </div>
         )
     }
