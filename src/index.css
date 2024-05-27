@@ -1,0 +1,4 @@
+.card-img-top {
+    width: auto; /* Adjust the width as needed */
+    height:150px /* Maintains aspect ratio */
+  }
