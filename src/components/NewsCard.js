@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Spinner from './Spinner';
 export default class NewsCard extends Component {
+    
 
     articles = [
         {
@@ -17,23 +18,11 @@ export default class NewsCard extends Component {
             "content": "If you click 'Accept all', we and our partners, including 238 who are part of the IAB Transparency &amp; Consent Framework, will also store and/or access information on a device (in other words, use … [+678 chars]"
         }
     ]
+    
+    constructor(props) {
 
-    async componentDidMount() {
-        this.setState(a => ({
-            loading: true
-        }));
-        let url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=1';
-        let data = await fetch(url)
-        let parsedData = await data.json()
-        this.setState({ article_list: parsedData.articles, loading: false });
-
-
-    }
-
-    constructor() {
-
-        super()
-
+        super(props)
+        // console.log(this.props.category)
         this.state = {
             article_list: this.articles,
             PageNo: 1,
@@ -42,6 +31,20 @@ export default class NewsCard extends Component {
 
 
     }
+    async componentDidMount() {
+        this.setState(a => ({
+            loading: true
+        }));
+        console.log(this.props.category)
+        // let url = 'https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=1';
+        let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=1`;
+        let data = await fetch(url)
+        let parsedData = await data.json()
+        this.setState({ article_list: parsedData.articles, loading: false });
+
+
+    }
+
 
 
     handlePreviousButton = async () => {
@@ -49,12 +52,12 @@ export default class NewsCard extends Component {
             loading: true,
             article_list:null
         }));
-
-        let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=${this.state.PageNo - 1}`;
+       
+        let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=${this.state.PageNo - 1}`;
         let data = await fetch(url)
 
         let parsedData = await data.json()
-        // console.log(this.state.PageNo)
+        // 
         this.setState(a => ({
             article_list: parsedData.articles,
             PageNo: a.PageNo - 1,
@@ -68,8 +71,8 @@ export default class NewsCard extends Component {
             loading: true,
             article_list:null
         }));
-
-        let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=${this.state.PageNo + 1}`;
+       
+        let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=6a8c54565120457189c18d57a5a0cf1b&pageSize=12&page=${this.state.PageNo + 1}`;
         let data = await fetch(url)
         let parsedData = await data.json()
         // console.log(this.state.PageNo)
@@ -81,8 +84,9 @@ export default class NewsCard extends Component {
 
     }
 
-    render(props) {
-
+    render() {
+       
+        
 
         return (
 
